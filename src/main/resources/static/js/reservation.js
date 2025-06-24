@@ -1,176 +1,133 @@
-let isEditing = false;
 const RESERVATION_API_ENDPOINT = '/reservations';
-const TIME_API_ENDPOINT = '/times';
-const timesOptions = [];
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('add-button').addEventListener('click', addInputRow);
 
-    requestRead(RESERVATION_API_ENDPOINT)
-        .then(render)
-        .catch(error => console.error('Error fetching reservations:', error));
-
-    fetchTimes();
-});
-
-function render(data) {
-    const tableBody = document.getElementById('table-body');
-    tableBody.innerHTML = '';
-
-    data.forEach(item => {
-        const row = tableBody.insertRow();
-
-        row.insertCell(0).textContent = item.id;
-        row.insertCell(1).textContent = item.name;
-        row.insertCell(2).textContent = item.date;
-        row.insertCell(3).textContent = item.time.startAt;
-
-        const actionCell = row.insertCell(row.cells.length);
-        actionCell.appendChild(createActionButton('삭제', 'btn-danger', deleteRow));
-    });
-}
-
-function fetchTimes() {
-    requestRead(TIME_API_ENDPOINT)
-        .then(data => {
-            timesOptions.push(...data);
-        })
-        .catch(error => console.error('Error fetching time:', error));
-}
-
-function createSelect(options, defaultText, selectId, textProperty) {
-    const select = document.createElement('select');
-    select.className = 'form-control';
-    select.id = selectId;
-
-    const defaultOption = document.createElement('option');
-    defaultOption.textContent = defaultText;
-    select.appendChild(defaultOption);
-
-    options.forEach(optionData => {
-        const option = document.createElement('option');
-        option.value = optionData.id;
-        option.textContent = optionData[textProperty];
-        select.appendChild(option);
-    });
-
-    return select;
-}
-
-function createActionButton(label, className, eventListener) {
-    const button = document.createElement('button');
-    button.textContent = label;
-    button.classList.add('btn', className, 'mr-2');
-    button.addEventListener('click', eventListener);
-    return button;
-}
-
-function addInputRow() {
-    if (isEditing) return;
-
-    const tableBody = document.getElementById('table-body');
-    const row = tableBody.insertRow();
-    isEditing = true;
-
-    const nameInput = createInput('text');
-    const dateInput = createInput('date');
-    const timeDropdown = createSelect(timesOptions, "시간 선택", 'time-select', 'startAt');
-
-    const cellFieldsToCreate = ['', nameInput, dateInput, timeDropdown];
-
-    cellFieldsToCreate.forEach((field, index) => {
-        const cell = row.insertCell(index);
-        if (typeof field === 'string') {
-            cell.textContent = field;
-        } else {
-            cell.appendChild(field);
+    flatpickr("#datepicker", {
+        inline: true,
+        onChange: function (selectedDates, dateStr) {
+            if (dateStr === '') return;
+            checkDate();
         }
     });
 
-    const actionCell = row.insertCell(row.cells.length);
-    actionCell.appendChild(createActionButton('확인', 'btn-custom', saveRow));
-    actionCell.appendChild(createActionButton('취소', 'btn-secondary', () => {
-        row.remove();
-        isEditing = false;
-    }));
+    document.getElementById('time-slots').addEventListener('click', event => {
+        if (event.target.classList.contains('time-slot') && !event.target.classList.contains('disabled')) {
+            document.querySelectorAll('.time-slot').forEach(slot => slot.classList.remove('active'));
+            event.target.classList.add('active');
+            checkDateAndTime();
+        }
+    });
+
+    document.getElementById('reserve-button').addEventListener('click', onReservationButtonClick);
+});
+
+function createSlot(type, text, id, booked) {
+    const div = document.createElement('div');
+    div.className = type + '-slot cursor-pointer bg-light border rounded p-3 mb-2';
+    div.textContent = text;
+    div.setAttribute('data-' + type + '-id', id);
+    if (type === 'time') {
+        div.setAttribute('data-time-booked', booked);
+        if (booked) {
+            div.classList.add('disabled');
+        }
+    }
+    return div;
 }
 
-function createInput(type) {
-    const input = document.createElement('input');
-    input.type = type;
-    input.className = 'form-control';
-    return input;
+function checkDate() {
+    const selectedDate = document.getElementById("datepicker").value;
+    if (selectedDate) {
+        const timeSlots = document.getElementById('time-slots');
+        timeSlots.innerHTML = '';
+        fetchAvailableTimes(selectedDate);
+    }
 }
 
-function createActionButton(label, className, eventListener) {
-    const button = document.createElement('button');
-    button.textContent = label;
-    button.classList.add('btn', className, 'mr-2');
-    button.addEventListener('click', eventListener);
-    return button;
+function fetchAvailableTimes(date) {
+    const query = new URLSearchParams({date}).toString();
+    const url = `/times?${query}`;
+
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    }).then(response => {
+        if (response.status === 200) return response.json();
+        throw new Error('Read failed');
+    }).then(renderAvailableTimes)
+        .catch(error => console.error("Error fetching available times:", error));
 }
 
-function saveRow(event) {
-    event.stopPropagation();
+function renderAvailableTimes(times) {
+    const timeSection = document.getElementById("time-section");
+    if (timeSection.classList.contains("disabled")) {
+        timeSection.classList.remove("disabled");
+    }
 
-    const row = event.target.parentNode.parentNode;
-    const nameInput = row.querySelector('input[type="text"]');
-    const dateInput = row.querySelector('input[type="date"]');
-    const timeSelect = row.querySelector('select');
+    const timeSlots = document.getElementById('time-slots');
+    timeSlots.innerHTML = '';
+    if (times.length === 0) {
+        timeSlots.innerHTML = '<div class="no-times">No Currently Available Times</div>';
+        return;
+    }
+    times.forEach(time => {
+        const startAt = time.startAt;
+        const timeId = time.id;
+        const alreadyBooked = time.alreadyBooked;
 
-    const reservation = {
-        name: nameInput.value,
-        date: dateInput.value,
-        timeId: timeSelect.value
-    };
+        const div = createSlot('time', startAt, timeId, alreadyBooked);
+        timeSlots.appendChild(div);
+    });
+}
 
-    requestCreate(reservation)
-        .then(() => {
-            location.reload();
+function checkDateAndTime() {
+    const selectedDate = document.getElementById("datepicker").value;
+    const selectedTimeElement = document.querySelector('.time-slot.active');
+    const reserveButton = document.getElementById("reserve-button");
+
+    if (selectedDate && selectedTimeElement) {
+        if (selectedTimeElement.getAttribute('data-time-booked') === 'true') {
+            reserveButton.classList.add("disabled");
+        } else {
+            reserveButton.classList.remove("disabled");
+        }
+    } else {
+        reserveButton.classList.add("disabled");
+    }
+}
+
+function onReservationButtonClick() {
+    const selectedDate = document.getElementById("datepicker").value;
+    const selectedTimeId = document.querySelector('.time-slot.active')?.getAttribute('data-time-id');
+
+    if (selectedDate && selectedTimeId) {
+        const reservationData = {
+            date: selectedDate,
+            timeId: selectedTimeId
+        };
+
+        fetch(`${RESERVATION_API_ENDPOINT}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(reservationData)
         })
-        .catch(error => console.error('Error:', error));
-
-    isEditing = false;
-}
-
-function deleteRow(event) {
-    const row = event.target.closest('tr');
-    const reservationId = row.cells[0].textContent;
-
-    requestDelete(reservationId)
-        .then(() => row.remove())
-        .catch(error => console.error('Error:', error));
-}
-
-function requestCreate(reservation) {
-    const requestOptions = {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(reservation)
-    };
-
-    return fetch(RESERVATION_API_ENDPOINT, requestOptions)
-        .then(response => {
-            if (response.status === 201) return response.json();
-            throw new Error('Create failed');
-        });
-}
-
-function requestDelete(id) {
-    const requestOptions = {
-        method: 'DELETE',
-    };
-
-    return fetch(`${RESERVATION_API_ENDPOINT}/${id}`, requestOptions)
-        .then(response => {
-            if (response.status !== 204) throw new Error('Delete failed');
-        });
-}
-
-function requestRead(endpoint) {
-    return fetch(endpoint)
-        .then(response => {
-            if (response.status === 200) return response.json();
-            throw new Error('Read failed');
-        });
+            .then(response => {
+                if (!response.ok) throw new Error('Reservation failed');
+                return response.json();
+            })
+            .then(data => {
+                alert("Reservation successful!");
+                location.reload();
+            })
+            .catch(error => {
+                alert("An error occurred while making the reservation.");
+                console.error(error);
+            });
+    } else {
+        alert("Please select a date, and time before making a reservation.");
+    }
 }

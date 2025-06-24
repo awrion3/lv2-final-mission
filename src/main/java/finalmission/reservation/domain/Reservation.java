@@ -2,57 +2,91 @@ package finalmission.reservation.domain;
 
 import finalmission.member.domain.Member;
 import finalmission.time.domain.ReservationTime;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
-import java.util.Objects;
+import java.time.LocalDateTime;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
+@Getter
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Reservation {
 
-    private final Long id;
-    private final LocalDate date;
-    private final ReservationTime time;
-    private final Member member;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    public Reservation(Member member, LocalDate date, ReservationTime time) {
-        this.id = null;
-        this.date = Objects.requireNonNull(date);
-        this.time = Objects.requireNonNull(time);
-        this.member = Objects.requireNonNull(member);
+    @Column(nullable = false)
+    private LocalDate date;
+
+    @JoinColumn(nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private ReservationTime time;
+
+    @JoinColumn(nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Member member;
+
+    @Builder
+    private Reservation(
+            final Long id,
+            @NonNull final LocalDate date,
+            @NonNull final ReservationTime time,
+            @NonNull final Member member,
+            @NonNull final LocalDateTime currentDateTime
+    ) {
+        validateFutureOrPresent(currentDateTime, date, time);
+        this.id = id;
+        this.date = date;
+        this.time = time;
+        this.member = member;
     }
 
-    public Reservation(Long id, Member member, LocalDate date, ReservationTime time) {
-        this.id = Objects.requireNonNull(id);
-        this.date = Objects.requireNonNull(date);
-        this.time = Objects.requireNonNull(time);
-        this.member = Objects.requireNonNull(member);
+    public static Reservation of(
+            final LocalDate date,
+            final ReservationTime reservationTime,
+            final Member member,
+            final LocalDateTime currentDateTime
+    ) {
+        return builder()
+                .id(null)
+                .date(date)
+                .time(reservationTime)
+                .member(member)
+                .currentDateTime(currentDateTime)
+                .build();
     }
 
-    public Long getId() {
-        return id;
+    public static Reservation admin(
+            final LocalDate date,
+            final ReservationTime reservationTime,
+            final Member member,
+            final LocalDateTime currentDateTime
+    ) {
+        return builder()
+                .id(null)
+                .date(date)
+                .time(reservationTime)
+                .member(member)
+                .currentDateTime(currentDateTime)
+                .build();
     }
 
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public ReservationTime getTime() {
-        return time;
-    }
-
-    public Member getMember() {
-        return member;
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        if (other == null || getClass() != other.getClass()) {
-            return false;
+    private void validateFutureOrPresent(LocalDateTime currentDateTime, LocalDate date, ReservationTime time) {
+        final LocalDateTime reservationDateTime = LocalDateTime.of(date, time.getStartAt());
+        if (reservationDateTime.isBefore(currentDateTime)) {
+            throw new IllegalArgumentException("예약은 현재 시간 이후로 가능합니다.");
         }
-        Reservation that = (Reservation) other;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 }
