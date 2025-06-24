@@ -29,15 +29,15 @@ function updateUIBasedOnLogin() {
             return response.json();
         })
         .then(data => {
-            document.getElementById('profile-name').textContent = data.name; // 프로필 이름 설정
-            document.querySelector('.nav-item.dropdown').style.display = 'block'; // 드롭다운 메뉴 표시
-            document.querySelector('.nav-item a[href="/login"]').parentElement.style.display = 'none'; // 로그인 버튼 숨김
+            document.getElementById('profile-name').textContent = data.name;
+            document.querySelector('.nav-item.dropdown').style.display = 'block';
+            document.querySelector('.nav-item a[href="/login"]').parentElement.style.display = 'none';
         })
         .catch(error => {
             console.error('Error:', error);
-            document.getElementById('profile-name').textContent = 'Profile'; // 기본 텍스트로 재설정
-            document.querySelector('.nav-item.dropdown').style.display = 'none'; // 드롭다운 메뉴 숨김
-            document.querySelector('.nav-item a[href="/login"]').parentElement.style.display = 'block'; // 로그인 버튼 표시
+            document.getElementById('profile-name').textContent = 'Profile';
+            document.querySelector('.nav-item.dropdown').style.display = 'none';
+            document.querySelector('.nav-item a[href="/login"]').parentElement.style.display = 'block';
         });
 }
 
@@ -80,4 +80,49 @@ function login() {
         .catch(error => {
             console.error('Error during login:', error);
         });
+}
+
+function signup() {
+    window.location.href = '/signup';
+}
+
+function register(event) {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const name = document.getElementById('name').value;
+
+    if (!email || !password || !name) {
+        alert('Please fill in all fields.');
+        return;
+    }
+
+    const formData = {
+        email: email,
+        password: password,
+        name: name
+    };
+
+    fetch('/members', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+        .then(response => {
+            if (!response.ok) {
+                alert('Signup request failed');
+                throw new Error('Signup request failed');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Signup successful:', data);
+            window.location.href = '/login';
+        })
+        .catch(error => {
+            console.error('Error during signup:', error);
+        });
+
+    event.preventDefault();
 }
