@@ -1,42 +1,24 @@
 package finalmission.time.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import java.time.LocalTime;
-import java.util.Objects;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReservationTime {
 
-    private final Long id;
-    private final LocalTime startAt;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    public ReservationTime(LocalTime startAt) {
-        this.id = null;
-        this.startAt = Objects.requireNonNull(startAt);
-    }
-
-    public ReservationTime(Long id, LocalTime startAt) {
-        this.id = Objects.requireNonNull(id);
-        this.startAt = Objects.requireNonNull(startAt);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public LocalTime getStartAt() {
-        return startAt;
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        if (other == null || getClass() != other.getClass()) {
-            return false;
-        }
-        ReservationTime that = (ReservationTime) other;
-        return Objects.equals(id, that.id) && Objects.equals(startAt, that.startAt);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, startAt);
-    }
+    @Column(nullable = false)
+    private LocalTime startAt;
 }

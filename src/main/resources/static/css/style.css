@@ -1,0 +1,30 @@
+.content-container {
+    width: 70%;
+    margin: 50px auto;
+}
+
+.content-container-title {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.btn-custom {
+    background-color: palevioletred;
+    color: white;
+    border: 1px solid peachpuff;
+}
+
+.btn-custom:hover {
+    background-color: mediumslateblue;
+    color: white;
+    border: 1px solid mistyrose;
+}
+
+#time-slots .time-slot.disabled {
+    cursor: not-allowed;
+}
+
+#time-slots .time-slot.active {
+    background-color: tomato !important;
+    color: white;
+}
