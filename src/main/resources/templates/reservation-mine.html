@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>나의 도서 대출 현황</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Reservation</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="/">
-        <img src="https://avatars.githubusercontent.com/u/141792611?s=200&v=4" alt="LOGO" style="height: 40px;">
+        <img src="/image/logo.png" alt="LOGO" style="height: 40px;">
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -19,16 +20,17 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="nav-link" href="/">Reservation</a>
+                <a class="nav-link" href="/reservation">Reservation</a>
             </li>
+
             <li class="nav-item">
                 <a class="nav-link" href="/login">Login</a>
             </li>
-            <li class="nav-item dropdown">
 
+            <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">
-                    <img class="profile-image" src="/image/logo.png" alt="Profile">
+                    <img class="profile-image" src="/image/member.png" alt="Profile" style="height: 40px;">
                     <span id="profile-name">Profile</span>
                 </a>
 
@@ -37,20 +39,20 @@
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="#" id="logout-btn">Logout</a>
                 </div>
-
             </li>
         </ul>
     </div>
 </nav>
 
 <div class="content-container">
-    <h2 class="content-container-title">내 도서 대출 현황</h2>
+    <h2 class="content-container-title">My Reservation</h2>
     <div class="table-container"/>
     <table class="table">
         <thead>
         <tr>
-            <th>날짜</th>
-            <th>시간</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Cancel</th>
             <th></th>
         </tr>
         </thead>
@@ -59,7 +61,7 @@
     </table>
 </div>
 
-<script src="/js/login.js"></script>
+<script src="/js/member.js"></script>
 <script src="/js/reservation-mine.js"></script>
 </body>
 </html>

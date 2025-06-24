@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>도서 대여 서비스</title>
+    <title>Study Room Reservation</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="/">
         <img src="/image/logo.png" alt="LOGO" style="height: 40px;">
     </a>
+
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -30,13 +30,14 @@
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">
-                    <img class="profile-image" src="/image/logo.png" alt="Profile">
+                    <img class="profile-image" src="/image/member.png" alt="Profile" style="height: 40px;">
                     <span id="profile-name">Profile</span>
                 </a>
 
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" href="/reservation-mine">My Reservation</a>
                     <div class="dropdown-divider"></div>
+
                     <a class="dropdown-item" href="#" id="logout-btn">Logout</a>
                 </div>
             </li>
@@ -44,10 +45,6 @@
     </div>
 </nav>
 
-<div class="content-container">
-    <h2 class="content-container-title">도서 대여 서비스 홈페이지</h2>
-</div>
-
-<script src="/js/login.js"></script>
+<script src="/js/member.js"></script>
 </body>
 </html>

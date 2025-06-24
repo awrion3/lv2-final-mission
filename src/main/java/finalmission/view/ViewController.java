@@ -11,9 +11,9 @@ public class ViewController {
         return "index";
     }
 
-    @GetMapping("/reservation")
-    public String displayReservationPage() {
-        return "reservation";
+    @GetMapping("/signup")
+    public String displaySignupPage() {
+        return "signup";
     }
 
     @GetMapping("/login")
@@ -21,8 +21,18 @@ public class ViewController {
         return "login";
     }
 
+    @GetMapping("/reservation")
+    public String displayReservationPage() {
+        return "reservation";
+    }
+
     @GetMapping("/reservation-mine")
     public String displayMyReservationPage() {
         return "reservation-mine";
+    }
+
+    @GetMapping("/admin/reservation")
+    public String displayAdminReservationPage() {
+        return "admin/reservation-admin";
     }
 }

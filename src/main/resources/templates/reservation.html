@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>도서 대여 현황</title>
+    <title>Create Reservation</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
@@ -22,31 +23,53 @@
             <li class="nav-item">
                 <a class="nav-link" href="/reservation">Reservation</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/login">Login</a>
+            </li>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">
+                    <img class="profile-image" src="/image/member.png" alt="Profile" style="height: 40px;">
+                    <span id="profile-name">Profile</span>
+                </a>
+
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="/reservation-mine">My Reservation</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#" id="logout-btn">Logout</a>
+                </div>
+            </li>
         </ul>
     </div>
 </nav>
 
-<div class="content-container">
-    <h2 class="content-container-title">도서 대여 예약 페이지</h2>
-    <div class="table-header">
-        <button id="add-button" class="btn btn-custom mb-2 float-right">예약 추가</button>
+<div id="content-container" class="col-md-10 offset-md-1 p-5">
+    <h2 class="content-container-title">Create Reservation</h2>
+    <div class="d-flex" id="reservation-container" >
+
+        <div class="section border rounded col-md-4 p-3" id="date-section">
+            <h3 class="fs-5 text-center mb-3">Pick Date</h3>
+            <div class="d-flex justify-content-center p-3">
+                <div id="datepicker"></div>
+            </div>
+        </div>
+
+        <div class="section border rounded col-md-4 p-3 disabled" id="time-section">
+            <h3 class="fs-5 text-center mb-3">Pick Time</h3>
+            <div class="p-3" id="time-slots">
+            </div>
+        </div>
     </div>
-    <div class="table-container"/>
-    <table class="table">
-        <thead>
-        <tr>
-            <th>예약번호</th>
-            <th>예약자</th>
-            <th>날짜</th>
-            <th>시간</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody id="table-body">
-        </tbody>
-    </table>
+
+    <div class="button-group float-right">
+        <button id="reserve-button" class="btn btn-primary mt-3 disabled">Reserve</button>
+    </div>
+</div>
 </div>
 
+<script src="/js/member.js"></script>
 <script src="/js/reservation.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </body>
 </html>

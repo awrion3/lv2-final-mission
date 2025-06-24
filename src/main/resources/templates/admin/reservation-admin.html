@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Member Login</title>
+    <title>Reservation Status</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="/">
+    <a class="navbar-brand" href="/admin">
         <img src="/image/logo.png" alt="LOGO" style="height: 40px;">
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -22,7 +23,6 @@
             <li class="nav-item">
                 <a class="nav-link" href="/reservation">Reservation</a>
             </li>
-
             <li class="nav-item">
                 <a class="nav-link" href="/login">Login</a>
             </li>
@@ -44,23 +44,54 @@
     </div>
 </nav>
 
-<div class="content-container" style="width: 300px;">
-    <h2 class="content-container-title">Login</h2>
-    <form id="login-form">
-        <div class="form-group">
-            <input type="email" class="form-control" id="email" placeholder="Email" required>
-        </div>
-        <div class="form-group">
-            <input type="password" class="form-control" id="password" placeholder="Password" required>
+<div class="content-container">
+    <h2 class="content-container-title">Reservation Status</h2>
+    <div class="d-flex">
+        <div class="table-container flex-grow-1 mr-3">
+            <div class="table-header d-flex justify-content-end">
+                <button id="add-button" class="btn btn-custom mb-2">Add Reservation</button>
+            </div>
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Reservation ID</th>
+                    <th>Member Name</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody id="table-body">
+                </tbody>
+            </table>
         </div>
 
-        <div class="d-flex justify-content-between">
-            <button type="button" class="btn btn-outline-custom" onclick="signup()">Sign Up</button>
-            <button type="button" class="btn btn-custom" onclick="login()">Login</button>
+        <div class="filter-section ml-3">
+            <form id="filter-form">
+                <div class="form-group">
+                    <label for="member">Member Name</label>
+                    <select type="text" id="member" name="member" class="form-control">
+                        <option style="display:none"></option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="date-from">From</label>
+                    <input type="date" id="date-from" name="date-from" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="date-to">To</label>
+                    <input type="date" id="date-to" name="date-to" class="form-control">
+                </div>
+
+                <button type="submit" class="btn btn-primary float-right">Apply</button>
+            </form>
         </div>
-    </form>
+    </div>
 </div>
 
 <script src="/js/member.js"></script>
+<script src="/js/admin/reservation-admin.js"></script>
 </body>
 </html>
